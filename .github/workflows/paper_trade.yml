@@ -1,0 +1,37 @@
+name: 📈 FBK LSTM Paper-Trade
+
+on:
+  schedule:
+    # 09:31 ET  → 13:31 UTC  (Mon–Fri)
+    - cron:  '31 13 * * 1-5'
+    # 15:59 ET  → 19:59 UTC  (Mon–Fri)
+    - cron:  '59 19 * * 1-5'
+
+jobs:
+  trade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install deps
+        run: |
+          python -m pip install --upgrade pip
+          pip install yfinance pandas numpy torch==2.2.1 alpaca_trade_api
+
+      - name: Run open logic
+        if: github.event.schedule == '31 13 * * 1-5'
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        run: python paper_trade.py open
+
+      - name: Run close logic
+        if: github.event.schedule == '59 19 * * 1-5'
+        env:
+          ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
+          ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
+        run: python paper_trade.py close
