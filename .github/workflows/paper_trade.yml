@@ -3,7 +3,7 @@ name: 📈 FBK LSTM Paper-Trade
 on:
   schedule:
     # 09:31 ET  → 13:31 UTC  (Mon–Fri)
-    - cron:  '31 13 * * 1-5'
+    - cron:  '30 13 * * 1-5' #changed to 930 instead of 931
     # 15:59 ET  → 19:59 UTC  (Mon–Fri)
     - cron:  '59 19 * * 1-5'
 
