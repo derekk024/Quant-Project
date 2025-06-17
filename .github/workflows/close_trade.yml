@@ -1,36 +1,39 @@
-name: 📉 FBK Paper-Trade – Close
+﻿name: FBK-Close
+
 
 on:
   schedule:
-    # 15 : 59 ET → 19 : 59 UTC, Monday-Friday
-    - cron: '59 19 * * 1-5'
-  workflow_dispatch:  # optional manual trigger
+    - cron: '59 19 * * 1-5'          # 15:59 ET
+  workflow_dispatch:
+
 
 jobs:
   close:
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
+
 
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      # ─── install exact versions to avoid NumPy-2 / Alpaca issues ───
+
       - name: Install deps
         run: |
-          python -m pip install --upgrade pip                           # latest pip
-          # ─── fix NumPy↔PyTorch conflict ────────────────────────────
-          pip uninstall -y numpy                                         # remove 2.x
-          pip install "numpy<2.0"                                        # install 1.26
-          # ─── core libs ──────────────────────────────────────────────
-          pip install torch==2.2.1                                       # built against NumPy 1.x
-          pip install alpaca_trade_api==3.3.2 alpha_vantage              # both packages
+          python -m pip install --upgrade pip
+          pip uninstall -y numpy || true
+          python - <<'PY'
+import site, subprocess, glob, os, shutil
+for p in glob.glob(os.path.join(site.getsitepackages()[0], "numpy*")):
+    shutil.rmtree(p, ignore_errors=True)
+PY
+          pip install torch==2.2.1
+          pip install "numpy<2.0" --no-cache-dir --force-reinstall
+          pip install alpaca_trade_api==3.3.2 alpha_vantage==2.3.1
           pip install yfinance pandas
-          pip list | grep -E 'numpy|torch|alpaca'                        # sanity print
 
-      # ─── run CLOSE logic ───
+
       - name: Place CLOSE order
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
