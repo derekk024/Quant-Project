@@ -1,40 +1,30 @@
-﻿name: FBK-Close
-
-
+name: FBK-Close
 on:
   schedule:
-    - cron: '59 19 * * 1-5'          # 15:59 ET
+    - cron: '59 19 * * 1-5'
   workflow_dispatch:
-
-
 jobs:
   close:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-
       - uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
-
       - name: Install deps
         run: |
           python -m pip install --upgrade pip
           pip uninstall -y numpy || true
           python - <<'PY'
-import site, subprocess, glob, os, shutil
-for p in glob.glob(os.path.join(site.getsitepackages()[0], "numpy*")):
+import site,glob,shutil,os
+for p in glob.glob(os.path.join(site.getsitepackages()[0],"numpy*")):
     shutil.rmtree(p, ignore_errors=True)
 PY
           pip install torch==2.2.1
-          pip install "numpy<2.0" --no-cache-dir --force-reinstall
+          pip install "numpy<2.0" --force-reinstall --no-cache-dir
           pip install alpaca_trade_api==3.3.2 alpha_vantage==2.3.1
           pip install yfinance pandas
-
-
-      - name: Place CLOSE order
+      - name: Close leg
         env:
           ALPACA_API_KEY_ID: ${{ secrets.ALPACA_API_KEY_ID }}
           ALPACA_SECRET_KEY: ${{ secrets.ALPACA_SECRET_KEY }}
