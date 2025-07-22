@@ -1,0 +1,1 @@
+1.3 is the template for generating scalar files used to generate a threshold likelihood of stock price movement up, and we place trades when that threshold is above a certain %. 1.4 is a monte carlo simulation of the strategy in recent years, and ibkr_paper_trade.py is the trade logic to implement the strategy (within Trader Workstation).
