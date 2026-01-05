@@ -18,9 +18,7 @@ from ib_insync import IB, Stock, MarketOrder                 # ≠ market-data c
 # ────────── USER CONFIG ──────────
 SEQ_LEN, HIDDEN_SIZE = 5, 512
 TICKERS: Dict[str, str] = {
-    "FBK":"XLF","BANR":"XLF","PNFP":"XLF","COP":"XLE","DK":"XLE","EPD":"XLE",
-    "MPC":"XLE","WMB":"XLE","TSLA":"XLK","MASI":"XLV","LFMD":"XLV","LMAT":"XLV",
-    "ICAD":"XLV","HAE":"XLV","EHC":"XLV","CAH":"XLV","AMED":"XLF",
+    "FBK":"XLF", #much more ticker-sector pairs are here in the actual implementation but I removed them here for privacy
 }
 NIGHT_ONLY = {"MPC","TSLA"}
 MODELS_DIR = Path.home()/ "Documents"/ "QuantProject"
